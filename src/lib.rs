@@ -8,7 +8,7 @@ pub mod models;
 pub mod schema;
 
 use chrono::NaiveDateTime;
-use diesel::prelude::*;
+use diesel::{prelude::*, result::Error};
 use dotenv::dotenv;
 use std::env;
 
@@ -26,7 +26,7 @@ pub fn create_file_entry(
     conn: &SqliteConnection,
     filename: &str,
     file_last_modified: &NaiveDateTime,
-) -> usize {
+) -> Result<usize, Error> {
     use schema::fileentries;
 
     let new_file_entry = NewFileEntry {
@@ -34,8 +34,7 @@ pub fn create_file_entry(
         file_last_modified,
     };
 
-    diesel::insert_into(fileentries::table)
+    Ok(diesel::insert_into(fileentries::table)
         .values(&new_file_entry)
-        .execute(conn)
-        .expect("Error saving new file entry.")
+        .execute(conn)?)
 }

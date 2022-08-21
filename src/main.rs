@@ -11,7 +11,7 @@ fn main() -> std::io::Result<()> {
     let conn = &establish_connection();
     for file_result in files {
         let file = file_result?;
-        match store_file_in_dir(file, conn) {
+        match store_file_in_db(file, conn) {
             Err(err) => {
                 println!("Error {} ignored while storing files.", err);
                 continue;
@@ -23,7 +23,10 @@ fn main() -> std::io::Result<()> {
     Ok(())
 }
 
-fn store_file_in_dir(
+/*Stores the given file in the database. If this function returns Ok(), it is idempotent.
+It will not insert or update files that are already in the db.
+If this function returns Err, it will not have stored anything in the db, making it not idempotent. (It could succeed on a successive call).*/
+fn store_file_in_db(
     file: fs::DirEntry,
     conn: &diesel::SqliteConnection,
 ) -> Result<(), FileStoreError> {
@@ -39,7 +42,7 @@ fn store_file_in_dir(
         .first::<i64>(conn)?
         > 0;
     if !already_exists {
-        create_file_entry(conn, file_name, &last_modified);
+        create_file_entry(conn, file_name, &last_modified)?;
     }
     Ok(())
 }
