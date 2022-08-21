@@ -13,5 +13,5 @@ pub struct FileEntry {
 #[table_name = "fileentries"]
 pub struct NewFileEntry<'a> {
     pub filename: &'a str,
-    pub file_last_modified: &'a NaiveDateTime
+    pub file_last_modified: &'a NaiveDateTime,
 }

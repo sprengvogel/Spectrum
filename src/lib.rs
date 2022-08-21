@@ -3,13 +3,14 @@ extern crate diesel;
 
 extern crate dotenv;
 
+pub mod error;
 pub mod models;
 pub mod schema;
 
 use chrono::NaiveDateTime;
 use diesel::prelude::*;
 use dotenv::dotenv;
-use std::{env};
+use std::env;
 
 use models::NewFileEntry;
 
@@ -21,10 +22,17 @@ pub fn establish_connection() -> SqliteConnection {
         .unwrap_or_else(|_| panic!("Error connecting to {}", database_url))
 }
 
-pub fn create_file_entry(conn: &SqliteConnection, filename: &str, file_last_modified: &NaiveDateTime) -> usize {
+pub fn create_file_entry(
+    conn: &SqliteConnection,
+    filename: &str,
+    file_last_modified: &NaiveDateTime,
+) -> usize {
     use schema::fileentries;
 
-    let new_file_entry = NewFileEntry { filename, file_last_modified };
+    let new_file_entry = NewFileEntry {
+        filename,
+        file_last_modified,
+    };
 
     diesel::insert_into(fileentries::table)
         .values(&new_file_entry)
