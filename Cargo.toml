@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+libsqlite3-sys = { version = "^0", features = ["bundled"] }
 diesel = { version = "1.4.*", features = ["sqlite", "chrono"] }
 chrono = "0.4"
 dotenv = "0.15.0"
